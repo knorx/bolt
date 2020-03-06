@@ -31,7 +31,8 @@ module Bolt
         "ssl"             => "When true, Bolt uses secure https connections for WinRM.",
         "ssl-verify"      => "When true, verifies the targets certificate matches the cacert.",
         "tmpdir"          => "The directory to upload and execute temporary files on the target.",
-        "user"            => "Login user. **Required unless using Kerberos.**"
+        "user"            => "Login user. **Required unless using Kerberos.**",
+        "basic-auth-only" => "Force basic authentication."
       }.freeze
 
       def self.options
@@ -44,6 +45,7 @@ module Bolt
           'ssl' => true,
           'ssl-verify' => true,
           'file-protocol' => 'winrm'
+          'basic_auth_only' => false,
         }
       end
 
@@ -60,6 +62,11 @@ module Bolt
         ssl_flag = options['ssl']
         unless !!ssl_flag == ssl_flag
           raise Bolt::ValidationError, 'ssl option must be a Boolean true or false'
+        end
+        
+        basic_auth_only_flag = options['basic-auth-only']
+        unless !!basic_auth_only_flag == basic_auth_only_flag
+          raise Bolt::ValidationError, 'basic-auth-only option must be a Boolean true or false'
         end
 
         if ssl_flag && (options['file-protocol'] == 'smb')
